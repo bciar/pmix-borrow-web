@@ -22,7 +22,7 @@ def index():
     else:
         try:
             base_files = flask.request.files.getlist("sources[]")
-            base_file_names = '';
+            base_file_names = ''
             for base_file in base_files:
                 base_file_name = upload_file(base_file)
                 base_file_names += ' '+base_file_name
@@ -31,9 +31,11 @@ def index():
             '''options_list = request.form.getlist('options[]')
             options = " ".join(options_list)'''
 
-            command = "python -m pmix.borrow -m "+target_file+" "+base_file_names
+            upload_folder = basedir + path_char + 'temp_uploads'
+            output_file_path = os.path.join(upload_folder, 'result.xlsx')
+            command = "python -m pmix.borrow -m "+target_file+" "+base_file_names+" -o "+output_file_path
             stdout, stderr = _run_background_process(command)
-            return render_template('index.html', stderr=stderr, stdout=stdout, target_file_path=target_file, target_file_name=target_origin.filename)
+            return render_template('index.html', stderr=stderr, stdout=stdout, target_file_path=output_file_path, target_file_name="result.xlsx")
 
         except Exception as err:
             msg = 'An unexpected error occurred:\n\n' + str(err)
